@@ -3,6 +3,9 @@ package chat;
 import java.io.Serializable;
 
 public class ChatMessage implements Serializable {
+
+    /*Deserializer uses this field to determinate
+     * if bytes that are representing object are in the same version as used definition. */
     private static final long serialVersionUID = 1L;
 
     private String author;

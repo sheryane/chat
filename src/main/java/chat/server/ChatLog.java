@@ -6,14 +6,14 @@ import chat.DatedChatMessage;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatLog {
-    private List<Socket> clients;
+    private Map<Socket, ObjectOutputStream> clients;
 
     public ChatLog() {
-        clients = new ArrayList<>();
+        clients = new ConcurrentHashMap<>();
     }
 
     public void acceptMessage(ChatMessage chatMessage) {
@@ -31,22 +31,27 @@ public class ChatLog {
     }
 
     private void updateClients(DatedChatMessage datedMessage) {
-        for (Socket client : clients) {
-            try (ObjectOutputStream clientConnection =
-                         new ObjectOutputStream(client.getOutputStream())) {
+        clients.values().iterator().forEachRemaining((clientConnection) -> {
+            try {
                 clientConnection.writeObject(datedMessage);
             } catch (IOException e) {
                 System.out.println("Could not send message");
             }
-        }
+        });
     }
 
-    public void register(Socket client) {
-        clients.add(client);
+    public void register(Socket client) throws IOException {
+        clients.put(client, new ObjectOutputStream(client.getOutputStream()));
     }
 
     public void unregister(Socket client) {
-        clients.remove(client);
-    }
+        ObjectOutputStream connection = clients.remove(client);
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (IOException e) {
 
+            }
+        }
+    }
 }

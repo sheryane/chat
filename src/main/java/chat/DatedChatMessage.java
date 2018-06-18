@@ -3,6 +3,8 @@ package chat;
 import java.util.Date;
 
 public class DatedChatMessage extends ChatMessage {
+
+    // Defined also here, cause it's defines as private in ChatMessage class.
     private static final long serialVersionUID = 1L;
 
     private Date receiveDate;

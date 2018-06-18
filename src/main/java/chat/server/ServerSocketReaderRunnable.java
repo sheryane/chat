@@ -1,23 +1,34 @@
 package chat.server;
 
 import chat.ChatMessage;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.sql.SQLOutput;
 
 public class ServerSocketReaderRunnable implements Runnable {
     private Socket client;
     private ChatLog chatLog;
 
-    public ServerSocketReaderRunnable(Socket socket, ChatLog chatLog) {
-        this.client = socket;
+    public ServerSocketReaderRunnable(Socket client, ChatLog chatLog) {
+        this.client = client;
         this.chatLog = chatLog;
-        chatLog.register(socket);
+
+        try {
+            chatLog.register(client);
+        } catch (IOException e) {
+            System.out.println("User cannot be registered due to connecion error.");
+        }
     }
 
     @Override
     public void run() {
+
+        /* {@link AutoCloseable} feature = do not
+         * need to bother with closing stream after work is done. */
+
         try (ObjectInputStream inputStream =
                      new ObjectInputStream(client.getInputStream())) {
             boolean connected = true;

@@ -8,7 +8,9 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientTerminal implements Runnable {
+    // Scanner will be used for reading user input
     private final Scanner scanner;
+    // Socket is a connection to remote server.
     private final Socket socket;
 
     public ClientTerminal() {

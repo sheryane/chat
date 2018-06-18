@@ -37,6 +37,8 @@ public class ServerSocketReaderRunnable implements Runnable {
                 if (message.getMessage().equalsIgnoreCase("exit")) {
                     connected = false;
                     System.out.println(message.getAuthor() + " disconnected.");
+                    System.exit(0);
+                    return;
                 } else {
                     chatLog.acceptMessage(message);
                 }
